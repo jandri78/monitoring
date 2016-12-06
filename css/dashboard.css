@@ -1,0 +1,33 @@
+.mdl-layout--fixed-drawer.is-upgraded:not(.is-small-screen)>.mdl-layout__header {
+    margin-left: 0px;
+    width: 100%;
+}
+.mdl-layout--fixed-drawer>.mdl-layout__content {
+    margin-left: 0px;
+}
+
+.flex-container {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+  justify-content: space-around;
+}
+
+.flex-item {
+  max-width: 200px;
+  text-align: center;
+}
+
+.title-server {
+    background-color: #d0d0d0;
+    padding: 2%;
+    width: 100%;
+    text-align: center;
+    border-radius: 2px;
+}

@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>DashBoard Monitor</title>
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="images/android-desktop.png">
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Material Design Lite">
+    <link rel="apple-touch-icon-precomposed" href="images/ios-desktop.png">
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
+    <link rel="shortcut icon" href="images/favicon.png">
+    <!-- SEO: If your mobile URL is different from the desktop URL, add a canonical link to the desktop page https://developers.google.com/webmasters/smartphone-sites/feature-phones -->
+    <!--
+    <link rel="canonical" href="http://www.example.com/">
+    -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.cyan-light_blue.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard-light.css">
+    <link rel="stylesheet" href="css/dialog-polyfill.css">
+
+    <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+
+    <style>
+    #view-source {
+        position: fixed;
+        display: block;
+        right: 0;
+        bottom: 0;
+        margin-right: 40px;
+        margin-bottom: 40px;
+        z-index: 900;
+    }
+    
+    .mdl-chip {
+        display: inline-block;
+        background-color: #f4f4f4;
+        height: 32px;
+        vertical-align: middle;
+        line-height: 32px;
+        border-radius: 25px;
+    }
+    
+    .mdl-chip__label {
+        padding: 0 12px;
+        color: rgba(0, 0, 0, 0.87);
+    }
+    
+    .mdl-chip--deletable .mdl-chip__label {
+        padding-right: 4px;
+    }
+    
+    .mdl-chip--deletable .mdl-chip__delete {
+        display: inline-block;
+        height: 24px;
+        width: 24px;
+        padding-right: 4px;
+        background-color: rgba(0, 0, 0, 0.54);
+        border-radius: 100%;
+        vertical-align: middle;
+        margin: 4px 4px 4px 0;
+        padding: 0;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .mdl-chip--deletable .mdl-chip__delete .material-icons {
+        font-size: 16px;
+        color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .mdl-chip .mdl-chip__image {
+        height: 32px;
+        width: 32px;
+        display: inline;
+    }
+    
+    .mdl-chip .mdl-chip__image img {
+        border-radius: 20px;
+    }
+    
+    i.material-icons.icon-panel.task-chip {
+        position: relative;
+        top: 3px;
+        left: 5px;
+        background-color: #3F51B5;
+        padding: 5px;
+        border-radius: 50px;
+        color: #fff;
+        font-size: 16px;
+    }
+    
+    .mdl-card__supporting-text {
+        width: 100%;
+    }
+    
+    button#show-disk {
+        height: 24px;
+        line-height: 26px;
+        background-color: #37474f;
+        color: #fff;
+    }
+    
+    .mdl-dialog {
+      max-width: 600px;
+      width: inherit;
+      min-width: 300px;
+    }
+    
+    progress {
+      -webkit-appearance: none;
+      border: none;
+      -moz-appearance: none;
+      background: #808080;
+      width: 100%;
+    }
+    
+    ::-webkit-progress-value {
+        background-color: #00BBD6;
+    }
+    
+    progress::-ms-fill {
+        background-color: #00BBD6;
+    }
+    
+    progress::-moz-progress-bar {
+        background-color: #00BBD6;
+        border: none;
+    }
+    </style>
+    <script src="js/dialog-polyfill.js"></script>
+</head>
+
+<body>
+    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+        <header class="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
+            <div class="mdl-layout__header-row">
+                <span class="mdl-layout-title">Monitor</span>
+                <div class="mdl-layout-spacer"></div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+                    <label class="mdl-button mdl-js-button mdl-button--icon" for="search">
+                        <i class="material-icons">search</i>
+                    </label>
+                    <div class="mdl-textfield__expandable-holder">
+                        <input class="mdl-textfield__input" type="text" id="search">
+                        <label class="mdl-textfield__label" for="search">Enter your query...</label>
+                    </div>
+                </div>
+                <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
+                    <i class="material-icons">more_vert</i>
+                </button>
+                <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="hdrbtn">
+                    <li class="mdl-menu__item">About</li>
+                    <li class="mdl-menu__item">Contact</li>
+                    <li class="mdl-menu__item">Legal information</li>
+                </ul>
+            </div>
+        </header>
+        <div class="demo-drawer mdl-layout__drawer mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
+            <header class="demo-drawer-header">
+                <img src="images/user.png" class="demo-avatar">
+                <div class="demo-avatar-dropdown">
+                    <span>hello@example.com</span>
+                    <div class="mdl-layout-spacer"></div>
+                    <button id="accbtn" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+                        <i class="material-icons" role="presentation">arrow_drop_down</i>
+                        <span class="visuallyhidden">Accounts</span>
+                    </button>
+                    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="accbtn">
+                        <li class="mdl-menu__item">hello@example.com</li>
+                        <li class="mdl-menu__item">info@example.com</li>
+                        <li class="mdl-menu__item"><i class="material-icons">add</i>Add another account...</li>
+                    </ul>
+                </div>
+            </header>
+            <nav class="demo-navigation mdl-navigation mdl-color--blue-grey-800">
+                <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>Home</a>
+                <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">inbox</i>Inbox</a>
+                <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">delete</i>Trash</a>
+                <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">report</i>Spam</a>
+                <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i>Forums</a>
+                <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i>Updates</a>
+                <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">local_offer</i>Promos</a>
+                <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">shopping_cart</i>Purchases</a>
+                <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">people</i>Social</a>
+                <div class="mdl-layout-spacer"></div>
+                <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">help_outline</i><span class="visuallyhidden">Help</span></a>
+            </nav>
+        </div>
+        <main class="mdl-layout__content mdl-color--grey-100">
+            <div class="mdl-grid demo-content">
+                <div class="mdl-cell mdl-cell--12-col mdl-grid">
+                    <div class="server-card-square mdl-card mdl-shadow--2dp">
+                        <div class="mdl-card__title mdl-card--expand">
+                            <h5 class="mdl-card__title-text">Server 1: &nbsp;<span>10.170.0.231</span></h5>
+                        </div>
+                        <div class="mdl-card__supporting-text">
+                            <div class="mdl-grid" style="width:100%;">
+                                <div class="mdl-cell--3-col mdl-cell--12-col-phone mdl-cell--4-col-tablet">
+                                    <div style="text-align: center;">
+                                        <h5><i class="material-icons icon-panel">flash_on</i>  CPU</h5>
+                                        <input type="text" class="dial" value="0" data-min="0" data-max="100" data-step=".1" data-fgColor="#ffec03" data-width="50%" data-readOnly=true>
+                                    </div>
+                                </div>
+                                <div class="mdl-cell--3-col  mdl-cell--12-col-phone mdl-cell--4-col-tablet">
+                                    <div style="text-align: center;">
+                                        <h5><i class="material-icons icon-panel">timeline</i> LOAD</h5>
+                                        <div id="container" style="min-width: 210px; height: 200px; margin: 0 auto; width:100%;"></div>
+                                    </div>
+                                </div>
+                                <div class="mdl-cell--3-col  mdl-cell--12-col-phone mdl-cell--4-col-tablet">
+                                    <div style="text-align: center;">
+                                        <h5><i class="material-icons icon-panel">memory</i>  MEMORY</h5>
+                                        <div id="memory" style="min-width: 200px; height: 200px; margin: 0 auto; width:100%;"></div>
+                                    </div>
+                                </div>
+                                <div class="mdl-cell--3-col  mdl-cell--12-col-phone mdl-cell--4-col-tablet">
+                                    <div class="container-task">
+                                        <h5 style="text-align: center;">
+                                          <i class="material-icons icon-panel">sd_storage</i> &nbsp;DISK - 
+                                          <span id="diskSpace"></span> 
+                                          <!-- Colored FAB button with ripple -->
+                                          <button id="show-disk" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                                            INFO
+                                          </button>
+
+
+                                        </h5>
+                                        <div class="mdl-grid" style="width:100%;">
+                                            <div class="mdl-cell--4-col">
+                                                <span class="mdl-chip">                           
+                            <span class="mdl-chip__label">
+                              USED: &nbsp;<b><span id="used"></span></b>
+                                                </span>
+                                                </span>
+                                            </div>
+                                            <div class="mdl-cell--4-col">
+                                                <span class="mdl-chip">                           
+                            <span class="mdl-chip__label">
+                              AVA.: &nbsp;<b><span id="ava"></span></b>
+                                                </span>
+                                                </span>
+                                            </div>
+                                            <div class="mdl-cell--4-col">
+                                                <span class="mdl-chip">                           
+                            <span class="mdl-chip__label">
+                              USE%: &nbsp;<b><span id="usper"></span></b>
+                                                </span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h5 style="text-align: center;">TASK <i class="material-icons icon-panel">flash_on</i></h5>
+                                    <div class="container-task">
+                                        <div class="mdl-grid" style="width:100%;">
+                                            <div class="mdl-cell--6-col">
+                                                <!-- Number badge on icon -->
+                                                <span class="mdl-chip">
+                            <span class="mdl-chip__image">
+                              <i class="material-icons icon-panel task-chip">account_circle</i>
+                            </span>
+                                                <span class="mdl-chip__label">
+                              USERS: &nbsp;<b><span id="user"></span></b>
+                                                </span>
+                                                </span>
+                                            </div>
+                                            <div class="mdl-cell--6-col">
+                                                <!-- Number badge on icon -->
+                                                <span class="mdl-chip">
+                            <span class="mdl-chip__image">
+                              <i class="material-icons icon-panel task-chip">chrome_reader_mode</i>
+                            </span>
+                                                <span class="mdl-chip__label">
+                              TASK: &nbsp;<b><span id="task"></span></b>
+                                                </span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="mdl-grid" style="width:100%;">
+                                            <div class="mdl-cell--6-col">
+                                                <!-- Number badge on icon -->
+                                                <span class="mdl-chip">
+                            <span class="mdl-chip__image">
+                              <i class="material-icons icon-panel task-chip">visibility_off</i>
+                            </span>
+                                                <span class="mdl-chip__label">
+                              SLEEP: &nbsp;<b><span id="sleep"></span></b>
+                                                </span>
+                                                </span>
+                                            </div>
+                                            <div class="mdl-cell--6-col">
+                                                <!-- Number badge on icon -->
+                                                <span class="mdl-chip">
+                            <span class="mdl-chip__image">
+                              <i class="material-icons icon-panel task-chip">directions_run</i>
+                            </span>
+                                                <span class="mdl-chip__label">
+                              RUNING: &nbsp;<b><span id="running"></span></b>
+                                                </span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mdl-card__actions mdl-card--border">
+                                <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+              View Updates
+            </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mdl-grid demo-content">
+                    <div class="demo-charts mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+                        <svg fill="currentColor" width="200px" height="200px" viewBox="0 0 1 1" class="demo-chart mdl-cell mdl-cell--4-col mdl-cell--3-col-desktop">
+                            <use xlink:href="#piechart" mask="url(#piemask)" />
+                            <text x="0.5" y="0.5" font-family="Roboto" font-size="0.3" fill="#888" text-anchor="middle" dy="0.1">82
+                                <tspan font-size="0.2" dy="-0.07">%</tspan>
+                            </text>
+                        </svg>
+                        <svg fill="currentColor" width="200px" height="200px" viewBox="0 0 1 1" class="demo-chart mdl-cell mdl-cell--4-col mdl-cell--3-col-desktop">
+                            <use xlink:href="#piechart" mask="url(#piemask)" />
+                            <text x="0.5" y="0.5" font-family="Roboto" font-size="0.3" fill="#888" text-anchor="middle" dy="0.1">82
+                                <tspan dy="-0.07" font-size="0.2">%</tspan>
+                            </text>
+                        </svg>
+                        <svg fill="currentColor" width="200px" height="200px" viewBox="0 0 1 1" class="demo-chart mdl-cell mdl-cell--4-col mdl-cell--3-col-desktop">
+                            <use xlink:href="#piechart" mask="url(#piemask)" />
+                            <text x="0.5" y="0.5" font-family="Roboto" font-size="0.3" fill="#888" text-anchor="middle" dy="0.1">82
+                                <tspan dy="-0.07" font-size="0.2">%</tspan>
+                            </text>
+                        </svg>
+                        <svg fill="currentColor" width="200px" height="200px" viewBox="0 0 1 1" class="demo-chart mdl-cell mdl-cell--4-col mdl-cell--3-col-desktop">
+                            <use xlink:href="#piechart" mask="url(#piemask)" />
+                            <text x="0.5" y="0.5" font-family="Roboto" font-size="0.3" fill="#888" text-anchor="middle" dy="0.1">82
+                                <tspan dy="-0.07" font-size="0.2">%</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--8-col">
+                        <svg fill="currentColor" viewBox="0 0 500 250" class="demo-graph">
+                            <use xlink:href="#chart" />
+                        </svg>
+                        <svg fill="currentColor" viewBox="0 0 500 250" class="demo-graph">
+                            <use xlink:href="#chart" />
+                        </svg>
+                    </div>
+                    <div class="demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
+                        <div class="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
+                            <div class="mdl-card__title mdl-card--expand mdl-color--teal-300">
+                                <h2 class="mdl-card__title-text">Updates</h2>
+                            </div>
+                            <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+                                Non dolore elit adipisicing ea reprehenderit consectetur culpa.
+                            </div>
+                            <div class="mdl-card__actions mdl-card--border">
+                                <a href="#" class="mdl-button mdl-js-button mdl-js-ripple-effect">Read More</a>
+                            </div>
+                        </div>
+                        <div class="demo-separator mdl-cell--1-col"></div>
+                        <div class="demo-options mdl-card mdl-color--deep-purple-500 mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--3-col-tablet mdl-cell--12-col-desktop">
+                            <div class="mdl-card__supporting-text mdl-color-text--blue-grey-50">
+                                <h3>View options</h3>
+                                <ul>
+                                    <li>
+                                        <label for="chkbox1" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
+                                            <input type="checkbox" id="chkbox1" class="mdl-checkbox__input">
+                                            <span class="mdl-checkbox__label">Click per object</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label for="chkbox2" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
+                                            <input type="checkbox" id="chkbox2" class="mdl-checkbox__input">
+                                            <span class="mdl-checkbox__label">Views per object</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label for="chkbox3" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
+                                            <input type="checkbox" id="chkbox3" class="mdl-checkbox__input">
+                                            <span class="mdl-checkbox__label">Objects selected</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label for="chkbox4" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
+                                            <input type="checkbox" id="chkbox4" class="mdl-checkbox__input">
+                                            <span class="mdl-checkbox__label">Objects viewed</span>
+                                        </label>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="mdl-card__actions mdl-card--border">
+                                <a href="#" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--blue-grey-50">Change location</a>
+                                <div class="mdl-layout-spacer"></div>
+                                <i class="material-icons">location_on</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </main>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" style="position: fixed; left: -1000px; height: -1000px;">
+            <defs>
+                <mask id="piemask" maskContentUnits="objectBoundingBox">
+                    <circle cx=0.5 cy=0.5 r=0.49 fill="white" />
+                    <circle cx=0.5 cy=0.5 r=0.40 fill="black" />
+                </mask>
+                <g id="piechart">
+                    <circle cx=0.5 cy=0.5 r=0.5 />
+                    <path d="M 0.5 0.5 0.5 0 A 0.5 0.5 0 0 1 0.95 0.28 z" stroke="none" fill="rgba(255, 255, 255, 0.75)" />
+                </g>
+            </defs>
+        </svg>
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 250" style="position: fixed; left: -1000px; height: -1000px;">
+            <defs>
+                <g id="chart">
+                    <g id="Gridlines">
+                        <line fill="#888888" stroke="#888888" stroke-miterlimit="10" x1="0" y1="27.3" x2="468.3" y2="27.3" />
+                        <line fill="#888888" stroke="#888888" stroke-miterlimit="10" x1="0" y1="66.7" x2="468.3" y2="66.7" />
+                        <line fill="#888888" stroke="#888888" stroke-miterlimit="10" x1="0" y1="105.3" x2="468.3" y2="105.3" />
+                        <line fill="#888888" stroke="#888888" stroke-miterlimit="10" x1="0" y1="144.7" x2="468.3" y2="144.7" />
+                        <line fill="#888888" stroke="#888888" stroke-miterlimit="10" x1="0" y1="184.3" x2="468.3" y2="184.3" />
+                    </g>
+                    <g id="Numbers">
+                        <text transform="matrix(1 0 0 1 485 29.3333)" fill="#888888" font-family="'Roboto'" font-size="9">500</text>
+                        <text transform="matrix(1 0 0 1 485 69)" fill="#888888" font-family="'Roboto'" font-size="9">400</text>
+                        <text transform="matrix(1 0 0 1 485 109.3333)" fill="#888888" font-family="'Roboto'" font-size="9">300</text>
+                        <text transform="matrix(1 0 0 1 485 149)" fill="#888888" font-family="'Roboto'" font-size="9">200</text>
+                        <text transform="matrix(1 0 0 1 485 188.3333)" fill="#888888" font-family="'Roboto'" font-size="9">100</text>
+                        <text transform="matrix(1 0 0 1 0 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">1</text>
+                        <text transform="matrix(1 0 0 1 78 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">2</text>
+                        <text transform="matrix(1 0 0 1 154.6667 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">3</text>
+                        <text transform="matrix(1 0 0 1 232.1667 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">4</text>
+                        <text transform="matrix(1 0 0 1 309 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">5</text>
+                        <text transform="matrix(1 0 0 1 386.6667 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">6</text>
+                        <text transform="matrix(1 0 0 1 464.3333 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">7</text>
+                    </g>
+                    <g id="Layer_5">
+                        <polygon opacity="0.36" stroke-miterlimit="10" points="0,223.3 48,138.5 154.7,169 211,88.5
+              294.5,80.5 380,165.2 437,75.5 469.5,223.3   " />
+                    </g>
+                    <g id="Layer_4">
+                        <polygon stroke-miterlimit="10" points="469.3,222.7 1,222.7 48.7,166.7 155.7,188.3 212,132.7
+              296.7,128 380.7,184.3 436.7,125   " />
+                    </g>
+                </g>
+            </defs>
+        </svg>
+
+
+
+        <dialog class="mdl-dialog">
+            <h4 class="mdl-dialog__title">Disk Info</h4>
+            <div class="mdl-dialog__content">
+                <!-- 
+
+      Filesystem              Type      Size  Used Avail Use% Mounted on
+
+d1    devtmpfs                devtmpfs  2.3G     0  2.3G   0% /dev
+d2    tmpfs                   tmpfs     2.2G     0  2.2G   0% /dev/shm
+d3    tmpfs                   tmpfs     2.2G   57M  2.2G   3% /run
+d4    tmpfs                   tmpfs     2.2G     0  2.2G   0% /sys/fs/cgroup
+d5    /dev/mapper/centos-home xfs        25G   11G   15G  43% /home
+d6    /dev/xvda1              xfs       497M  210M  287M  43% /boot
+
+ -->
+                <div class="mdl-grid">
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-phone">
+                        <strong><i class="material-icons icon-panel">sd_storage</i> /dev : <span class="d1"></span></strong>
+                        <div>
+                            <progress class="d1" value="0" max="100"></progress>
+                        </div>
+                    </div>
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-phone">
+                        <strong><i class="material-icons icon-panel">sd_storage</i> /dev/shm: <span class="d2"></span></strong>
+                        <div>
+                            <progress class="d2" value="0" max="100"></progress>
+                        </div>
+                    </div>
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-phone">
+                        <strong><i class="material-icons icon-panel">sd_storage</i> /run: <span class="d3"></span> </strong>
+                        <div>
+                            <progress class="d3" value="0" max="100"></progress>
+                        </div>
+                    </div>
+                </div>
+                <div class="mdl-grid">
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-phone">
+                        <strong><i class="material-icons icon-panel">sd_storage</i> /sys/fs/cgroup: <span class="d4"></span></strong>
+                        <div>
+                            <progress class="d4" value="0" max="100"></progress>
+                        </div>
+                    </div>
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-phone">
+                        <strong><i class="material-icons icon-panel">sd_storage</i> /home: <span class="d5"></span></strong>
+                        <div>
+                            <progress class="d5" value="0" max="100"></progress>
+                        </div>
+                    </div>
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-phone">
+                        <strong><i class="material-icons icon-panel">sd_storage</i> /boot: <span class="d6"></span> </strong>
+                        <div>
+                            <progress class="d6" value="0" max="100"></progress>
+                        </div>
+                    </div>
+                </div>
+                <div id="infoDisk">
+                </div>
+            </div>
+            <div class="mdl-dialog__actions">
+                <button type="button" class="mdl-button close">CERRAR</button>
+            </div>
+        </dialog>
+        <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+        
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/highcharts-more.js"></script>
+        <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-Knob/1.2.13/jquery.knob.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
+        <script src="js/dashboard.js"></script>
+</body>
+
+</html>

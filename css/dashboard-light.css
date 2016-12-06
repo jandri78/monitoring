@@ -1,0 +1,27 @@
+.title-server {
+    background-color: #d0d0d0;
+    padding: 2%;
+    width: 100%;
+    text-align: center;
+    border-radius: 2px;
+}
+
+.mdl-card.server-card-square{
+  min-height: 320px;
+  width: 100%;
+}
+
+.mdl-card__title{
+  padding-bottom: 0;
+}
+
+.mdl-card__supporting-text{
+  padding-top: 0;
+}
+
+.icon-panel {
+    font-size: 22px;
+    display: inline-flex;
+    position: relative;
+    top: 4px;
+}

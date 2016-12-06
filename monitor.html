@@ -1,0 +1,522 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+    <script src="https://code.createjs.com/soundjs-0.6.2.min.js"></script>
+    <!--<link rel="stylesheet" href="css/main.css"> -->
+</head>
+<style type="text/css">
+@media tv and (min-width: 1600px) and (orientation: landscape) {
+    body {
+        background-color: blue;
+    }
+}
+
+
+/* ----------- Retina Screens ----------- */
+
+@media screen and (min-device-width: 1600px) and (max-device-width: 1700px) and (-webkit-min-device-pixel-ratio: 2) and (min-resolution: 192dpi) {
+    body {
+        background-color: blue;
+    }
+}
+
+@media screen and (min-device-width: 1700px) and (max-device-width: 1900px) and (-webkit-min-device-pixel-ratio: 2) and (min-resolution: 192dpi) {
+    body {
+        background-color: red;
+    }
+}
+</style>
+
+<body onload="loadSound();">
+    <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    <!-- Add your site or application content here -->
+    <div style="margin-top:5%;"></div>
+    <div class="container-fluid">
+        <div class="col-md-3 text-center">
+            <h3>CPU</h3>
+            <input type="text" class="dial" value="0" data-min="0" data-max="100" data-step=".1" data-fgColor="#ffec03" data-width="100" data-readOnly=true>
+        </div>
+        <div class="col-md-3 text-center">
+            <h3>LOAD SERVER</h3>
+            <div id="container" style="min-width: 310px; height: 200px; margin: 0 auto"></div>
+        </div>
+        <div class="col-md-3 ">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <span class="badge" id="user"></span>
+                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span> USER
+                </li>
+                <li class="list-group-item">
+                    <span class="badge" id="task"></span>
+                    <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> TASK
+                </li>
+                <li class="list-group-item">
+                    <span class="badge" id="running"></span>
+                    <span class="glyphicon glyphicon-flash" aria-hidden="true"></span> RUNNIG
+                </li>
+                <li class="list-group-item">
+                    <span class="badge" id="sleep"></span>
+                    <span class="glyphicon glyphicon-equalizer" aria-hidden="true"></span> SLEEPING
+                </li>
+                <li class="list-group-item">
+                    <span class="badge" id="stop"></span>
+                    <span class="glyphicon glyphicon-time" aria-hidden="true"></span> STOPPED
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-3 ">
+            <div id="memory" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://developerssl.org/monitor/js/jquery.knob.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
+    <script>
+    window.jQuery || document.write('<script src="js/vendor/jquery-1.12.4.min.js"><\/script>')
+    </script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
+    <script>
+    window.ga = function() {
+        ga.q.push(arguments)
+    };
+    ga.q = [];
+    ga.l = +new Date;
+    ga('create', 'UA-XXXXX-Y', 'auto');
+    ga('send', 'pageview')
+    </script>
+    <script src="https://www.google-analytics.com/analytics.js" async defer></script>
+
+
+
+
+
+
+
+
+
+
+    <script type="text/javascript">
+
+
+
+      var soundID = "Game-Spawn";
+
+      function loadSound () {
+        createjs.Sound.registerSound("files/Game-Spawn.ogg", soundID);
+      }
+
+      function playSound () {
+        createjs.Sound.play(soundID);
+      }
+
+
+
+    $(".dial").knob();
+
+    var d = new Date();
+
+    var freeMem = new Array(10).fill({
+        x: 0,
+        y: (new Date()).getTime()
+    });
+    var usedMem = new Array(10).fill({
+        x: 0,
+        y: (new Date()).getTime()
+    });
+    var dateMem = new Array(10);
+
+
+    var tmpMemFree;
+    var tmpMemUsef;
+
+
+////////////////////////// CPU /////////////////////////////////////////
+
+    var cpuSource = new EventSource('cpu.php');
+    
+    cpuSource.onmessage = function(e) {
+
+      var c = parseFloat(e.data);
+      console.log('%CPU: ',e.data);
+
+
+      if (parseInt(c) < 10) {
+            colorFg = "#388E3C";
+            //console.log("colorFg: ", colorFg," - Number", parseInt(c))
+        }
+
+        if (parseInt(c) > 9 && parseInt(c) < 50) {
+            colorFg = "#FBC02D";
+            ///console.log("colorFg: ", colorFg," - Number", parseInt(c))            
+        }
+
+        if (parseInt(c) > 50) {
+            colorFg = "#d32f2f";
+            //console.log("colorFg: ", colorFg," - Number", parseInt(c))
+            createjs.Sound.play(soundID);
+        }
+
+
+
+      $('.dial').trigger('configure', {
+            'readOnly': true,
+            'inputColor': '#999',
+            'fgColor': colorFg
+        });
+
+        $('.dial').val(c).trigger('change');
+
+    }
+
+
+////////////////////////// SERVER  /////////////////////////////////////////
+
+    var source = new EventSource('index.php');
+
+    source.onmessage = function(e) {
+
+
+console.log("DATA:",e.data);
+
+        var cpu = 0,
+            task = 0,
+            top = 0,
+            mem = 0;
+
+        var tmpData = [];
+        var tmpDataMem = [];
+
+        var tmpFree = [];
+        var tmpUsed = [];
+
+        var colorFg;
+
+
+
+
+
+        top = e.data.split(';')[0];
+        task = e.data.split(';')[1];
+        cpu = e.data.split(';')[2];
+        mem = e.data.split(';')[3];
+
+
+
+
+
+
+        var tmpTop = top.split(';')[0].split(": ")[1].split(', ');
+        var tmpData = tmpTop.map(function(num) {
+            return parseFloat(num);
+        });
+
+
+
+        var tmpCpu = parseFloat(cpu.split(' ')[2]);
+        var tmpTask = task.split(' ')[1];
+        var tmpUser = top.split(', ')[2];
+        var tmpRun = task.split(' ')[5];
+        var tmpRun = task.split(' ')[5];
+        var tmpSleep = task.split(', ')[2].split(' ')[0];
+       
+
+
+        console.log("Mem:", mem);
+
+        tmpMemFree = 0;
+        tmpMemUsef = 0;
+
+
+        tmpMemFree = parseFloat(mem.split(',')[1].split('used')[0]);
+        //tmpMemFree = parseFloat(mem.split(', ')[1].split(' ')[2]);
+        tmpMemUsef = parseFloat(mem.split(', ')[2].split(' ')[2]);
+
+        console.log("MEM Free Bytes:", numeral(tmpMemFree).format('0.00b'));
+        console.log("MEM Use Bytes:", numeral(tmpMemUsef).format('0.00b'));
+
+        console.log('Used Mem: ', tmpMemUsef);
+        console.log('Free Mem: ', tmpMemFree);
+
+
+
+        tmpDataMem.push([tmpMemFree]);
+        tmpDataMem.push([tmpMemUsef]);
+
+        freeMem.shift(0);
+        freeMem.push({
+            x: tmpMemFree,
+            y: (new Date()).getTime()
+        });
+
+        usedMem.shift(0);
+        usedMem.push({
+            x: tmpMemUsef,
+            y: (new Date()).getTime()
+        });
+
+        //console.log("FreeMem: ", freeMem);
+        //console.log("UsedMem: ", usedMem);
+
+
+
+
+        
+
+
+
+
+        
+
+
+        loadServer(tmpData);
+
+        $("#user").html(tmpUser);
+        $("#task").html(tmpTask);
+        $("#running").html(tmpRun);
+        $("#sleep").html(tmpSleep);
+        
+
+
+
+    };
+
+
+
+    function loadServer(data) {
+        // body...
+
+
+        $('#container').highcharts({
+            chart: {
+                type: 'line',
+                animation: false,
+                spacingBottom: 30
+            },
+            title: {
+                text: ''
+            },
+            credits: {
+                enabled: false
+            },
+            subtitle: {
+                text: '',
+                floating: true,
+                align: 'right',
+                verticalAlign: 'bottom',
+                y: 15
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'left',
+                verticalAlign: 'bottom',
+                x: 150,
+                y: 100,
+                floating: true,
+                borderWidth: 1,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+            },
+            xAxis: {
+                categories: ['1 minute', '5 minutes', '15 minutes']
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                },
+                labels: {
+                    formatter: function() {
+                        return this.value;
+                    }
+                }
+            },
+            tooltip: {
+                formatter: function() {
+                    return '<b>' + this.series.name + '</b><br/>' +
+                        this.x + ': ' + this.y;
+                }
+            },
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    animation: false,
+                    enableMouseTracking: false
+                },
+                series: {
+                    dataLabels: {
+                        enabled: true,
+                        borderRadius: 2,
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                        borderWidth: 1,
+                        borderColor: '#AAA',
+                        y: -6
+                    }
+                }
+            },            
+            series: [{
+                name: 'Load Server',
+                data: data,
+                type: 'line',
+                zoneAxis: 'y',
+                zones: [{
+                    value: 1,
+                    color: '#388E3C'
+                },{
+                    value: 2,
+                    color:'#FBC02D'
+                },{
+                    value: 3,
+                    color: '#d32f2f'
+                }]
+            }]
+        });
+    }
+
+
+
+
+
+    function memoryLoad(a, b) {
+
+
+    }
+
+
+
+
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
+
+    var chart;
+    $('#memory').highcharts({
+        chart: {
+            type: 'spline',
+            animation: Highcharts.svg, // don't animate in old IE
+            marginRight: 10,
+            events: {
+                load: function() {
+
+                    // set up the updating of the chart each second
+                    var series = this.series[0];
+                    var series2 = this.series[1];
+                    setInterval(function() {
+                        var x = (new Date()).getTime(), // current time
+                            y = tmpMemFree;
+                        z = tmpMemUsef;
+                        series.addPoint([x, y], false, true);
+                        series2.addPoint([x, z], true, true);
+                    }, 1000);
+                }
+            }
+        },
+        title: {
+            text: 'MEMORY'
+        },
+        credits: {
+            enabled: false
+        },
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150
+        },
+        yAxis: [{
+            title: {
+                text: ''
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        }, {
+            title: {
+                text: ''
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        }],
+        tooltip: {
+            formatter: function() {
+                var a = numeral(this.y).format('0.0b')
+                return '<b>' + this.series.name + '</b><br/>' +
+                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' + a;
+
+            }
+        },
+        legend: {
+            enabled: true
+        },
+        exporting: {
+            enabled: false
+        },
+        series: [{
+            name: 'Free Memory',
+            type: 'areaspline',
+            color: '#AED581',
+            fillOpacity: 0.3,
+            data: (function() {
+                // generate an array of random data
+                var data = [],
+                    time = (new Date()).getTime(),
+                    i;
+
+                for (i = -9; i <= 0; i += 1) {
+                    data.push({
+                        x: time + i * 1000,
+                        y: Math.random()
+                    });
+                }
+                return data;
+            }())
+        }, {
+            name: 'Used Memory',
+            type: 'areaspline',
+            color: '#e57373',
+            fillOpacity: 0.3,
+            dashStyle: 'dash',
+            data: (function() {
+                // generate an array of random data
+                var data = [],
+                    time = (new Date()).getTime(),
+                    i;
+
+                for (i = -9; i <= 0; i += 1) {
+                    data.push({
+                        x: time + i * 1000,
+                        y: Math.random()
+                    });
+                }
+                return data;
+            }())
+        }]
+    });
+    </script>
+</body>
+
+</html>
